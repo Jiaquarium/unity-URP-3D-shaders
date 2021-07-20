@@ -1,3 +1,4 @@
+// Required for Mesh/UnlitDirectionalShadow Shader
 // Updated for URP 10.2.1/release
 // https://github.com/Unity-Technologies/Graphics/blob/10.2.1/release/com.unity.render-pipelines.universal/Shaders/LitForwardPass.hlsl
 
@@ -173,7 +174,19 @@ half4 LitPassFragment(Varyings input) : SV_Target
     InputData inputData;
     InitializeInputData(input, surfaceData.normalTS, inputData);
 
-    half4 color = UniversalFragmentPBR(inputData, surfaceData);
+    // Based on Unlit Shader
+    // https://github.com/Unity-Technologies/Graphics/blob/10.2.1/release/com.unity.render-pipelines.universal/Shaders/Unlit.shader
+    half2 uv = input.uv;
+    half4 texColor = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uv);
+    half4 color = texColor.rgba * _BaseColor.rgba;
+
+    // Manual adjustment to change color of shadow on pixels. 
+    // https://docs.unity3d.com/560/Documentation/Manual/SL-VertexFragmentShaderExamples.html
+    // https://github.com/Unity-Technologies/Graphics/blob/master/com.unity.render-pipelines.universal/ShaderLibrary/RealtimeLights.hlsl
+    Light light = GetMainLight(inputData.shadowCoord);
+    half shadow = light.shadowAttenuation;
+
+    color.rgb = shadow == 1 ? color.rgb : color.rgb * (shadow + _ShadowLight);
 
     color.rgb = MixFog(color.rgb, inputData.fogCoord);
     color.a = OutputAlpha(color.a, _Surface);

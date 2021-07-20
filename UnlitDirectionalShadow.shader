@@ -2,7 +2,7 @@
 // Based on Lit Shader
 // Unlit but receives and casts Directional Shadows.
 // https://github.com/Unity-Technologies/Graphics/blob/10.2.1/release/com.unity.render-pipelines.universal/Shaders/Lit.shader
-Shader "Universal Render Pipeline/Lit"
+Shader "Universal Render Pipeline/Custom/Mesh/Unlit Directional Shadow"
 {
     Properties
     {
@@ -11,6 +11,9 @@ Shader "Universal Render Pipeline/Lit"
 
         [MainTexture] _BaseMap("Albedo", 2D) = "white" {}
         [MainColor] _BaseColor("Color", Color) = (1,1,1,1)
+
+        // Shadow receiving
+        _ShadowLight ("Shadow Light", Float) = 0.5
 
         _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
 
@@ -140,8 +143,8 @@ Shader "Universal Render Pipeline/Lit"
             #pragma vertex LitPassVertex
             #pragma fragment LitPassFragment
 
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitForwardPass.hlsl"
+            #include "UnlitDirectionalShadowInput.hlsl"
+            #include "UnlitDirectionalShadowForwardPass.hlsl"
             ENDHLSL
         }
 
@@ -172,7 +175,7 @@ Shader "Universal Render Pipeline/Lit"
             #pragma vertex ShadowPassVertex
             #pragma fragment ShadowPassFragment
 
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+            #include "UnlitDirectionalShadowInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
             ENDHLSL
         }
@@ -570,5 +573,5 @@ Shader "Universal Render Pipeline/Lit"
     }
 
     FallBack "Hidden/Universal Render Pipeline/FallbackError"
-    CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.LitShader"
+    // CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.LitShader"
 }
