@@ -316,7 +316,10 @@ Shader "Universal Render Pipeline/Custom/Mesh/Unlit Directional Shadow"
             #pragma target 4.5
 
             #pragma vertex UniversalVertexMeta
-            #pragma fragment UniversalFragmentMeta
+            // Replace the following with UniversalFragmentMetaLit on URP 12+
+            // https://forum.unity.com/threads/metainput-missing-semantics.1209718/
+            // #pragma fragment UniversalFragmentMeta
+            #pragma fragment UniversalFragmentMetaLit
 
             #pragma shader_feature_local_fragment _SPECULAR_SETUP
             #pragma shader_feature_local_fragment _EMISSION
